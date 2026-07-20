@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TÊN CHƯƠNG TRÌNH}} — Hành trình bắt đầu cùng AI</title>
+<meta name="description" content="Funnel tuyển thành viên + onboarding gamified: landing page giới thiệu, kích hoạt tài khoản, và nhiệm vụ huấn luyện theo tuần.">
+<style>
+  :root{
+    --gold:#f0a500;
+    --gold-dark:#c98300;
+    --ink:#141420;
+    --ink-soft:#4a4a58;
+    --bg:#ffffff;
+    --card:#fafafa;
+    --border:#ececec;
+    --green:#1fa855;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.5;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px;}
+  a{color:inherit;}
+  img,svg{max-width:100%;display:block;}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:56px 0 40px;text-align:center;}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:#fff6e5;color:var(--gold-dark);
+    border:1px solid #ffe2a3;border-radius:999px;
+    padding:6px 16px;font-size:13px;font-weight:600;
+    letter-spacing:.02em;
+  }
+  .hero h1{
+    font-size:clamp(32px,6vw,52px);
+    font-weight:900;letter-spacing:-.01em;
+    margin:18px 0 10px;
+  }
+  .hero p.sub{color:var(--ink-soft);font-size:17px;margin-bottom:18px;}
+  .schedule-pill{
+    display:inline-flex;align-items:center;gap:8px;
+    border:1px solid var(--border);border-radius:999px;
+    padding:8px 16px;font-size:14px;font-weight:600;
+    color:var(--ink-soft);margin-bottom:32px;
+  }
+
+  .hero-art{
+    position:relative;border-radius:20px;overflow:hidden;
+    aspect-ratio:16/8;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(240,165,0,.55), transparent 55%),
+      linear-gradient(135deg,#1a1a2e 0%,#3a2a12 60%,#141420 100%);
+    box-shadow:0 0 0 1px #f3d9a1, 0 20px 50px -20px rgba(240,165,0,.5);
+    margin-bottom:36px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .hero-art .label{
+    color:#fff;text-align:center;padding:20px;
+  }
+  .hero-art .label strong{
+    display:block;font-size:clamp(20px,3.5vw,30px);
+    letter-spacing:.04em;margin-bottom:6px;
+  }
+  .hero-art .label span{color:#f0d9a8;font-size:14px;}
+
+  .cta-btn{
+    appearance:none;border:none;cursor:pointer;
+    background:linear-gradient(180deg,#ffc233,var(--gold));
+    color:#1a1200;font-weight:800;font-size:16px;
+    padding:16px 40px;border-radius:999px;
+    box-shadow:0 10px 24px -8px rgba(240,165,0,.6);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .cta-btn:hover{transform:translateY(-2px);box-shadow:0 14px 28px -8px rgba(240,165,0,.7);}
+  .cta-btn:active{transform:translateY(0);}
+
+  .hero .micro{color:var(--ink-soft);font-size:13px;margin-top:14px;}
+  .link-pill{
+    display:inline-flex;align-items:center;gap:6px;
+    border:1px solid var(--border);border-radius:999px;
+    padding:7px 14px;font-size:13px;color:var(--ink-soft);
+    margin-top:12px;text-decoration:none;
+  }
+
+  /* ---------- ONBOARDING (hidden until CTA clicked) ---------- */
+  #onboarding{display:none;padding:20px 0 80px;}
+  #onboarding.show{display:block;}
+
+  .video-card{
+    border:1px solid #ffe2a3;background:#fffaf0;border-radius:var(--radius);
+    padding:24px;text-align:center;margin-bottom:36px;
+  }
+  .video-card .tag{
+    display:inline-block;background:#ffe6a0;color:#7a5300;
+    font-size:11px;font-weight:800;letter-spacing:.06em;
+    padding:4px 10px;border-radius:6px;margin-bottom:10px;
+  }
+  .video-card h3{font-size:18px;margin-bottom:4px;}
+  .video-card p{color:var(--ink-soft);font-size:13px;margin-bottom:16px;}
+  .video-placeholder{
+    aspect-ratio:16/9;border-radius:10px;overflow:hidden;
+    background:linear-gradient(135deg,#1a1a2e,#3a2a12);
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+  }
+  .play-btn{
+    width:64px;height:64px;border-radius:50%;
+    background:#e33;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 20px rgba(0,0,0,.4);
+  }
+  .play-btn::after{
+    content:"";border-style:solid;border-width:12px 0 12px 20px;
+    border-color:transparent transparent transparent #fff;margin-left:4px;
+  }
+  .video-placeholder .hint{
+    position:absolute;bottom:10px;left:0;right:0;color:#f0d9a8;
+    font-size:11px;
+  }
+
+  /* progress */
+  .progress-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    margin-bottom:10px;font-size:13px;color:var(--ink-soft);
+  }
+  .progress-head strong{color:var(--gold-dark);}
+  .steps{display:flex;gap:8px;margin-bottom:36px;}
+  .step-track{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden;position:relative;}
+  .step-track .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-dark));transition:width .4s ease;}
+
+  .section-title{text-align:center;margin-bottom:24px;}
+  .section-title .tag{
+    display:inline-flex;align-items:center;gap:6px;color:var(--gold-dark);
+    font-size:12px;font-weight:800;letter-spacing:.06em;margin-bottom:6px;
+  }
+  .section-title h2{font-size:22px;font-weight:800;}
+  .section-title p{color:var(--ink-soft);font-size:13px;margin-top:4px;}
+
+  /* mission cards */
+  .mission{
+    border:1px solid var(--border);border-radius:var(--radius);
+    margin-bottom:14px;overflow:hidden;background:var(--card);
+    transition:border-color .15s ease;
+  }
+  .mission.active{border-color:var(--gold);}
+  .mission.done{border-color:var(--green);}
+  .mission-head{
+    display:flex;align-items:center;gap:12px;padding:16px 18px;
+    cursor:pointer;user-select:none;
+  }
+  .m-num{
+    width:26px;height:26px;border-radius:50%;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:800;background:var(--border);color:var(--ink-soft);
+  }
+  .mission.active .m-num{background:var(--gold);color:#1a1200;}
+  .mission.done .m-num{background:var(--green);color:#fff;}
+  .mission-head .title{flex:1;}
+  .mission-head .title b{display:block;font-size:14px;}
+  .mission-head .title small{color:var(--ink-soft);font-size:12px;}
+  .chev{transition:transform .2s ease;color:var(--ink-soft);}
+  .mission.open .chev{transform:rotate(180deg);}
+
+  .mission-body{display:none;padding:0 18px 18px;}
+  .mission.open .mission-body{display:block;}
+
+  .quick-links{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 14px;}
+  .quick-links a{
+    font-size:13px;font-weight:700;color:var(--gold-dark);
+    text-decoration:underline;
+  }
+  .notice{
+    background:#fff6e5;border:1px solid #ffe2a3;border-radius:8px;
+    padding:10px 12px;font-size:12px;color:#7a5300;margin-bottom:14px;
+  }
+  .check-row{
+    display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px;
+  }
+  .check-row input{width:16px;height:16px;accent-color:var(--gold-dark);}
+
+  .complete-btn{
+    width:100%;margin-top:10px;padding:12px;border-radius:8px;
+    border:1px solid var(--border);background:#f2f2f2;color:var(--ink-soft);
+    font-weight:700;font-size:13px;cursor:not-allowed;
+  }
+  .complete-btn.ready{
+    background:var(--gold);color:#1a1200;border-color:var(--gold-dark);cursor:pointer;
+  }
+
+  /* tabs for training parts */
+  .tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px;}
+  .tab{
+    flex:none;font-size:12px;font-weight:700;padding:8px 12px;border-radius:8px;
+    background:#f2f2f2;color:var(--ink-soft);cursor:pointer;text-align:center;
+  }
+  .tab.active{background:var(--gold);color:#1a1200;}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+  .tab-panel h4{font-size:15px;margin-bottom:6px;}
+  .tab-panel p{font-size:13px;color:var(--ink-soft);margin-bottom:14px;}
+  .btn-block{
+    display:block;width:100%;text-align:center;padding:12px;border-radius:8px;
+    font-size:13px;font-weight:700;margin-bottom:8px;text-decoration:none;
+  }
+  .btn-primary{background:var(--gold);color:#1a1200;}
+  .btn-outline{border:1px solid var(--border);color:var(--ink);}
+
+  footer{
+    text-align:center;padding:30px 20px;color:#9a9aa5;font-size:12px;
+    border-top:1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ============ HERO / LANDING ============ -->
+  <section class="hero">
+    <span class="badge">✦ NHIỆM VỤ TÂN THỦ · {{TÊN HỆ THỐNG}}</span>
+    <h1>{{TÊN CHƯƠNG TRÌNH}}</h1>
+    <p class="sub">Hành trình bắt đầu sự nghiệp cùng AI</p>
+    <div class="schedule-pill">📅 {{GIỜ HỌP}} — Zoom mỗi {{THỨ}} hàng tuần</div>
+
+    <div class="hero-art">
+      <div class="label">
+        <strong>{{TÊN MẠNG LƯỚI}}</strong>
+        <span>LẦN ĐỂ ĐẠT — CHẠM ĐỂ DẪN ĐẦU</span>
+      </div>
+    </div>
+
+    <p style="font-size:17px;margin-bottom:20px;">
+      Bạn muốn đứng ngoài cuộc chơi AI hay bắt đầu <strong>ngay hôm nay</strong>?
+    </p>
+
+    <button class="cta-btn" id="startBtn" type="button">BẮT ĐẦU HÀNH TRÌNH</button>
+    <p class="micro">Tham gia nhóm Zalo để giữ chỗ và nhận tài nguyên độc quyền</p>
+    <br>
+    <a class="link-pill" href="{{LINK_ZALO}}" target="_blank" rel="noopener">
+      🔒 Giới hạn thành viên — Ưu tiên người hành động sớm
+    </a>
+  </section>
+
+  <!-- ============ ONBOARDING DASHBOARD ============ -->
+  <section id="onboarding">
+
+    <div class="video-card">
+      <span class="tag">VIDEO QUAN TRỌNG</span>
+      <h3>XEM VIDEO GIỚI THIỆU</h3>
+      <p>Dành ra vài phút để hiểu rõ giá trị của hành trình bạn đang tham gia</p>
+      <div class="video-placeholder">
+        <div class="play-btn"></div>
+        <span class="hint">Nhúng iframe video giới thiệu của bạn ở đây</span>
+      </div>
+    </div>
+
+    <div class="progress-head">
+      <span>Tiến trình của bạn</span>
+      <strong id="progressLabel">0/5 hoàn thành</strong>
+    </div>
+    <div class="steps" id="stepsTrack"></div>
+
+    <div class="section-title">
+      <span class="tag">📋 NHIỆM VỤ TUẦN THỨ NHẤT</span>
+      <h2>Hoàn thành từng bước để mở khoá bước tiếp theo</h2>
+    </div>
+
+    <!-- Mission 1 -->
+    <div class="mission active open" data-mission="1">
+      <div class="mission-head" onclick="toggleMission(1)">
+        <div class="m-num">1</div>
+        <div class="title">
+          <b>⚡ Kích hoạt tài khoản</b>
+          <small>Tham gia nhóm chính &amp; nhận thông báo</small>
+        </div>
+        <div class="chev">▾</div>
+      </div>
+      <div class="mission-body">
+        <div class="quick-links">
+          <a href="{{LINK_ZALO}}" target="_blank" rel="noopener">Vào Zalo Chat — Nhóm Chính</a>
+          <a href="{{LINK_TELEGRAM}}" target="_blank" rel="noopener">Vào Telegram — Nhận thông báo</a>
+        </div>
+        <div class="notice">Tham gia cả 2 kênh để không bỏ lỡ thông báo quan trọng.</div>
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;">Xác nhận hoàn thành</p>
+        <label class="check-row"><input type="checkbox" data-mission="1" data-item="zalo"> Đã tham gia Zalo Chat (nhóm chính)</label>
+        <label class="check-row"><input type="checkbox" data-mission="1" data-item="telegram"> Đã tham gia Telegram (nhận thông báo)</label>
+        <button class="complete-btn" data-mission="1" disabled>Hoàn thành checklist để tiếp tục (0/2)</button>
+      </div>
+    </div>
+
+    <!-- Mission 2 -->
+    <div class="mission" data-mission="2">
+      <div class="mission-head" onclick="toggleMission(2)">
+        <div class="m-num">2</div>
+        <div class="title">
+          <b>🤝 Kết nối &amp; làm quen</b>
+          <small>Mở rộng vòng ảnh hưởng của bạn</small>
+        </div>
+        <div class="chev">▾</div>
+      </div>
+      <div class="mission-body">
+        <label class="check-row"><input type="checkbox" data-mission="2" data-item="intro"> Tự giới thiệu bản thân trong nhóm chính</label>
+        <label class="check-row"><input type="checkbox" data-mission="2" data-item="greet"> Chào hỏi 3 thành viên khác</label>
+        <button class="complete-btn" data-mission="2" disabled>Hoàn thành checklist để tiếp tục (0/2)</button>
+      </div>
+    </div>
+
+    <!-- Mission 3 -->
+    <div class="mission" data-mission="3">
+      <div class="mission-head" onclick="toggleMission(3)">
+        <div class="m-num">3</div>
+        <div class="title">
+          <b>🎓 Bài tập huấn luyện</b>
+          <small>6 phần thực hành — Image · Video · Build App · Sales Page · Hệ Thống · Skill/App/Chatbot</small>
+        </div>
+        <div class="chev">▾</div>
+      </div>
+      <div class="mission-body">
+        <div class="tabs" id="trainTabs">
+          <div class="tab active" data-tab="0">PHẦN 1<br>Image</div>
+          <div class="tab" data-tab="1">PHẦN 2<br>Video</div>
+          <div class="tab" data-tab="2">PHẦN 3<br>Build App</div>
+          <div class="tab" data-tab="3">PHẦN 4<br>Sales Page</div>
+          <div class="tab" data-tab="4">PHẦN 5<br>Hệ Thống</div>
+          <div class="tab" data-tab="5">PHẦN 6<br>Skill/App/Chatbot</div>
+        </div>
+
+        <div class="tab-panel active" data-panel="0">
+          <h4>PHẦN 1 — AI IMAGE AGENT</h4>
+          <p>Học cách dùng AI tạo hình ảnh chuyên nghiệp: chân dung, sản phẩm, ảnh quảng cáo — chỉ bằng prompt, không cần Photoshop.</p>
+          <a class="btn-block btn-primary" href="{{LINK_VIDEO_PHAN_1}}" target="_blank" rel="noopener">BẤM VÀO ĐÂY — XEM VIDEO PHẦN 1</a>
+          <a class="btn-block btn-outline" href="{{LINK_APP_FLOW}}" target="_blank" rel="noopener">LINK APP FLOW</a>
+        </div>
+        <div class="tab-panel" data-panel="1"><h4>PHẦN 2 — AI VIDEO AGENT</h4><p>Nội dung phần 2 — điền tài liệu hướng dẫn của bạn ở đây.</p></div>
+        <div class="tab-panel" data-panel="2"><h4>PHẦN 3 — BUILD APP AI</h4><p>Nội dung phần 3 — điền tài liệu hướng dẫn của bạn ở đây.</p></div>
+        <div class="tab-panel" data-panel="3"><h4>PHẦN 4 — AI AGENT XÂY SALES PAGE</h4><p>Nội dung phần 4 — điền tài liệu hướng dẫn của bạn ở đây.</p></div>
+        <div class="tab-panel" data-panel="4"><h4>PHẦN 5 — THÀNH THẠO TỰ ĐỘNG HOÁ HỆ THỐNG</h4><p>Nội dung phần 5 — điền tài liệu hướng dẫn của bạn ở đây.</p></div>
+        <div class="tab-panel" data-panel="5"><h4>PHẦN 6 — AI AGENT XÂY SKILL / APP / CHATBOT</h4><p>Nội dung phần 6 — điền tài liệu hướng dẫn của bạn ở đây.</p></div>
+
+        <div class="notice">Không dùng ChatGPT để viết bài — hãy dựng trải nghiệm thật của riêng bạn.</div>
+        <p style="font-size:13px;font-weight:700;margin:10px 0 6px;">Xác nhận hoàn thành</p>
+        <label class="check-row"><input type="checkbox" data-mission="3" data-item="p1"> Phần 1 — AI Image Agent ✅</label>
+        <label class="check-row"><input type="checkbox" data-mission="3" data-item="p2"> Phần 2 — AI Video Agent ✅</label>
+        <label class="check-row"><input type="checkbox" data-mission="3" data-item="p3"> Phần 3 — Build App AI ✅</label>
+        <label class="check-row"><input type="checkbox" data-mission="3" data-item="p4"> Phần 4 — AI Agent xây Sales Page ✅</label>
+        <label class="check-row"><input type="checkbox" data-mission="3" data-item="p5"> Phần 5 — Thành thạo tự động hoá hệ thống ✅</label>
+        <label class="check-row"><input type="checkbox" data-mission="3" data-item="p6"> Phần 6 — AI Agent xây Skill/App/Chatbot ✅</label>
+        <button class="complete-btn" data-mission="3" disabled>Hoàn thành checklist để tiếp tục (0/6)</button>
+      </div>
+    </div>
+
+    <!-- Mission 4 (placeholder, locked) -->
+    <div class="mission" data-mission="4">
+      <div class="mission-head" onclick="toggleMission(4)">
+        <div class="m-num">4</div>
+        <div class="title">
+          <b>🚀 {{TÊN NHIỆM VỤ TUẦN 4}}</b>
+          <small>Mở khoá sau khi hoàn thành Tuần 3</small>
+        </div>
+        <div class="chev">▾</div>
+      </div>
+      <div class="mission-body">
+        <p style="font-size:13px;color:var(--ink-soft);">Nội dung nhiệm vụ tuần 4 — điền sau.</p>
+      </div>
+    </div>
+
+    <!-- Mission 5 (placeholder, locked) -->
+    <div class="mission" data-mission="5">
+      <div class="mission-head" onclick="toggleMission(5)">
+        <div class="m-num">5</div>
+        <div class="title">
+          <b>🏁 {{TÊN NHIỆM VỤ TUẦN 5}}</b>
+          <small>Mở khoá sau khi hoàn thành Tuần 4</small>
+        </div>
+        <div class="chev">▾</div>
+      </div>
+      <div class="mission-body">
+        <p style="font-size:13px;color:var(--ink-soft);">Nội dung nhiệm vụ tuần 5 — điền sau.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <footer>
+    Template funnel — thay toàn bộ nội dung trong {{ }} trước khi triển khai.
+  </footer>
+</div>
+
+<script>
+  const TOTAL_MISSIONS = 5;
+  const STORAGE_KEY = "funnel_progress_v1";
+
+  function loadState(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {checks:{}, done:{}}; }
+    catch(e){ return {checks:{}, done:{}}; }
+  }
+  function saveState(s){ localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+  let state = loadState();
+
+  function renderSteps(){
+    const track = document.getElementById('stepsTrack');
+    track.innerHTML = '';
+    for(let i=1;i<=TOTAL_MISSIONS;i++){
+      const t = document.createElement('div');
+      t.className='step-track';
+      const fill = document.createElement('div');
+      fill.className='fill';
+      fill.style.width = state.done[i] ? '100%' : '0%';
+      t.appendChild(fill);
+      track.appendChild(t);
+    }
+    const doneCount = Object.values(state.done).filter(Boolean).length;
+    document.getElementById('progressLabel').textContent = doneCount + '/' + TOTAL_MISSIONS + ' hoàn thành';
+  }
+
+  function applyChecks(){
+    document.querySelectorAll('input[type=checkbox][data-mission]').forEach(cb=>{
+      const m = cb.dataset.mission, it = cb.dataset.item;
+      cb.checked = !!(state.checks[m] && state.checks[m][it]);
+    });
+    document.querySelectorAll('.mission').forEach(el=>{
+      const m = el.dataset.mission;
+      updateMissionButton(m);
+      if(state.done[m]) el.classList.add('done');
+    });
+  }
+
+  function updateMissionButton(m){
+    const boxes = document.querySelectorAll('input[type=checkbox][data-mission="'+m+'"]');
+    if(boxes.length === 0) return;
+    let checked = 0;
+    boxes.forEach(b=>{ if(b.checked) checked++; });
+    const btn = document.querySelector('.complete-btn[data-mission="'+m+'"]');
+    if(!btn) return;
+    btn.textContent = 'Hoàn thành checklist để tiếp tục (' + checked + '/' + boxes.length + ')';
+    if(checked === boxes.length){
+      btn.disabled = false;
+      btn.classList.add('ready');
+    } else {
+      btn.disabled = true;
+      btn.classList.remove('ready');
+      const el = btn.closest('.mission');
+      el.classList.remove('done');
+      delete state.done[m];
+    }
+  }
+
+  document.addEventListener('change', e=>{
+    if(e.target.matches('input[type=checkbox][data-mission]')){
+      const m = e.target.dataset.mission, it = e.target.dataset.item;
+      state.checks[m] = state.checks[m] || {};
+      state.checks[m][it] = e.target.checked;
+      updateMissionButton(m);
+      saveState(state);
+      renderSteps();
+    }
+  });
+
+  document.addEventListener('click', e=>{
+    const btn = e.target.closest('.complete-btn');
+    if(btn && !btn.disabled){
+      const m = btn.dataset.mission;
+      state.done[m] = true;
+      saveState(state);
+      document.querySelector('.mission[data-mission="'+m+'"]').classList.add('done');
+      renderSteps();
+      const next = document.querySelector('.mission[data-mission="'+(parseInt(m)+1)+'"]');
+      if(next){
+        next.classList.add('active');
+        openMission(parseInt(m)+1);
+      }
+    }
+  });
+
+  function openMission(n){
+    document.querySelectorAll('.mission').forEach(el=>{
+      if(parseInt(el.dataset.mission) === n) el.classList.add('open');
+      else el.classList.remove('open');
+    });
+  }
+  function toggleMission(n){
+    const el = document.querySelector('.mission[data-mission="'+n+'"]');
+    el.classList.toggle('open');
+  }
+
+  // training tabs
+  document.getElementById('trainTabs').addEventListener('click', e=>{
+    const tab = e.target.closest('.tab');
+    if(!tab) return;
+    const idx = tab.dataset.tab;
+    document.querySelectorAll('#trainTabs .tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelector('.tab-panel[data-panel="'+idx+'"]').classList.add('active');
+  });
+
+  document.getElementById('startBtn').addEventListener('click', ()=>{
+    const ob = document.getElementById('onboarding');
+    ob.classList.add('show');
+    ob.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  renderSteps();
+  applyChecks();
+</script>
+
+</body>
+</html>
